@@ -33,8 +33,12 @@ RUN                     sed -i '/daemonize /cdaemonize = no' /etc/php5/fpm/php-f
 RUN                     sed -i '/^listen = /clisten = 0.0.0.0:9000' /etc/php5/fpm/pool.d/www.conf
 RUN                     sed -i '/^listen.allowed_clients/c;listen.allowed_clients =' /etc/php5/fpm/pool.d/www.conf
 RUN                     sed -i '/^;catch_workers_output/ccatch_workers_output = yes' /etc/php5/fpm/pool.d/www.conf
+RUN                     sed -i '/^chdir = \//cchdir = \/var\/www\/' /etc/php5/fpm/pool.d/www.conf
 
+RUN                     mkdir /var/www
+ADD                     ./test.php /var/www/
 
 EXPOSE                  9000
 
+WORKDIR                 /var/www
 CMD                     ["/usr/sbin/php5-fpm"]

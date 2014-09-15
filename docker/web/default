@@ -12,7 +12,7 @@ server {
     server_name localhost;
 
     access_log /var/log/nginx/localhost.com-access.log;
-    error_log  /var/log/nginx/localhost.com-error.log error;
+    error_log  /var/log/nginx/localhost.com-error.log debug;
 
     charset utf-8;
 
@@ -31,10 +31,11 @@ server {
     location ~ \.php$ {
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # With php5-fpm:
-        fastcgi_pass nginx_backend;
         fastcgi_index index.php;
         include fastcgi_params;
-        fastcgi_param HTTPS off;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;        
+        fastcgi_pass nginx_backend;
+#        fastcgi_param HTTPS off;
     }
 
     # Deny .htaccess file access
