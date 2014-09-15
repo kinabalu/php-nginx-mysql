@@ -1,20 +1,14 @@
 # base image
 #
 FROM                    mystic/baseimage
+MAINTAINER              Mystic Coders, LLC
 
 #
 # *** OS-level packages ***
 #
 
-RUN                     add-apt-repository -y ppa:nginx/stable
-RUN                     apt-get -y update
-RUN                     apt-get install -y lib32z1-dev libxml2-dev libxslt1-dev antiword poppler-utils
-RUN                     apt-get install -y php5-cli php5-fpm php5-mysql php5-curl php5-gd php5-mcrypt
-RUN                     apt-get install -y nginx
-RUN                     apt-get install -y phantomjs
-
-# the kriansa/H2P code stupidly thinks phantomjs is installed in /usr/local/bin so let's give 'em what they want
-RUN                     ln -s /usr/bin/phantomjs /usr/local/bin/phantomjs
+RUN                     apt-get -y update && apt-get install -y \
+                        nginx
 
 #
 # Configure nginx
@@ -27,9 +21,13 @@ RUN                      mkdir /var/www
 
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD default /etc/nginx/sites-available/
+ADD                     default /etc/nginx/sites-available/
 RUN                     echo "daemon off;" >> /etc/nginx/nginx.conf
 
-ENTRYPOINT /usr/sbin/php5-fpm -c /etc/php5/fpm && /usr/sbin/nginx -c /etc/nginx/nginx.conf
+ADD                     nginx.sh /usr/local/bin/
+RUN                     chmod +x /usr/local/bin/nginx.sh
 
 EXPOSE 80
+
+CMD ["/usr/local/bin/nginx.sh"]
+
